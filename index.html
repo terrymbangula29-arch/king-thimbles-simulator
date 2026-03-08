@@ -1,97 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head>
+[9:49 AM, 3/8/2026] Tmeargy: <script>
 
-<title>King Thimbles Pro</title>
-
-<style>
-
-body{
-background:#0e0e0e;
-color:white;
-font-family:Arial;
-text-align:center;
-}
-
-h1{
-margin-top:40px;
-}
-
-button{
-padding:12px 25px;
-font-size:18px;
-border:none;
-border-radius:8px;
-background:gold;
-cursor:pointer;
-margin-top:20px;
-}
-
-#table{
-width:420px;
-height:200px;
-margin:60px auto;
-position:relative;
-}
-
-.cup{
-width:100px;
-height:130px;
-background:gold;
-border-radius:14px;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:28px;
-font-weight:bold;
-position:absolute;
-cursor:pointer;
-transition:all .45s cubic-bezier(.68,-0.55,.27,1.55);
-}
-
-#cup1{ left:0px; }
-#cup2{ left:160px; }
-#cup3{ left:320px; }
-
-#result{
-margin-top:20px;
-font-size:24px;
-}
-
-#prediction{
-margin-top:10px;
-font-size:18px;
-color:#00ffcc;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<h1>King Thimbles Pro</h1>
-
-<button onclick="startGame()">Start Round</button>
-
-<div id="prediction">AI Prediction: --</div>
-
-<div id="table">
-
-<div class="cup" id="cup1" onclick="pickCup(1)">1</div>
-<div class="cup" id="cup2" onclick="pickCup(2)">2</div>
-<div class="cup" id="cup3" onclick="pickCup(3)">3</div>
-
-</div>
-
-<div id="result">Press Start Round</div>
-
-<script>
-
-let cups;
-let positions=[0,160,320];
-let winningCup;
-let shuffling=false;
+let cups
+let pos = [0,160,320]
+let shuffling=false
+let winningCup
 
 function startGame(){
 
@@ -99,83 +11,83 @@ cups=[
 document.getElementById("cup1"),
 document.getElementById("cup2"),
 document.getElementById("cup3")
-];
+]
 
-winningCup=Math.floor(Math.random()*3)+1;
+winningCup=Math.floor(Math.random()*3)+1
 
-showPrediction();
-
-shuffleCups(18);
+shuffleSequence(20)
 
 }
 
-function showPrediction(){
+function shuffleSequence(times){
 
-let prediction=Math.floor(Math.random()*3)+1;
-let confidence=Math.floor(Math.random()*40)+60;
-
-document.getElementById("prediction").innerText=
-"AI Prediction: Cup "+prediction+" ("+confidence+"%)";
-
-}
-
-function shuffleCups(times){
-
-shuffling=true;
-
-let shuffleSpeed=250;
+shuffling=true
 
 let shuffle=setInterval(()=>{
 
-let a=Math.floor(Math.random()*3);
-let b=Math.floor(Math.random()*3);
+let a=Math.floor(Math.random()*3)
+let b=Math.floor(Math.random()*3)
 
 while(a===b){
-b=Math.floor(Math.random()*3);
+b=Math.floor(Math.random()*3)
 }
 
-swapCups(a,b);
+streetSwap(a,b)
 
-times--;
+times--
 
 if(times<=0){
 
-clearInterval(shuffle);
-shuffling=false;
+clearInterval(shuffle)
 
-document.getElementById("result").innerText="Pick a cup";
+document.getElementById("result").innerText="Pick a cup"
 
-}
-
-},shuffleSpeed);
+shuffling=false
 
 }
 
-function swapCups(a,b){
+},220)
 
-let temp=positions[a];
-positions[a]=positions[b];
-positions[b]=temp;
+}
 
-cups[a].style.left=positions[a]+"px";
-cups[b].style.left=positions[b]+"px";
+function streetSwap(a,b){
+
+let cupA=cups[a]
+let cupB=cups[b]
+
+let posA=pos[a]
+let posB=pos[b]
+
+cupA.style.transform="translate("+posB+"px,-40px)"
+cupB.style.transform="translate("+posA+"px,40px)"
+
+setTimeout(()=>{
+
+cupA.style.transform="translate("+posB+"px,0px)"
+cupB.style.transform="translate("+posA+"px,0px)"
+
+},200)
+
+let temp=pos[a]
+pos[a]=pos[b]
+pos[b]=temp
 
 }
 
 function pickCup(choice){
 
 if(shuffling){
-alert("Wait for shuffle!");
-return;
+alert("Wait for shuffle!")
+return
 }
 
 if(choice===winningCup){
 
-document.getElementById("result").innerText="🎉 You Win!";
+document.getElementById("result").innerText="🎉 You Win!"
 
 }else{
 
-document.getElementById("result").innerText="❌ Try Again";
+document.getElementById("result").innerText="❌ Try Again"
 
 }
 
@@ -183,5 +95,3 @@ document.getElementById("result").innerText="❌ Try Again";
 
 </script>
 
-</body>
-</html>
