@@ -1,64 +1,153 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>King Thimbles Simulator</title>
+
+<title>King Thimbles Game</title>
+
 <style>
+
 body{
+background:#111;
+color:white;
 font-family:Arial;
 text-align:center;
-background:#222;
-color:white;
 }
 
-.cups{
-display:flex;
-justify-content:center;
-gap:20px;
+h1{
 margin-top:40px;
+}
+
+button{
+padding:10px 20px;
+font-size:18px;
+border:none;
+border-radius:6px;
+background:gold;
+cursor:pointer;
+margin-top:20px;
+}
+
+#game{
+width:420px;
+margin:50px auto;
+position:relative;
+height:180px;
 }
 
 .cup{
 width:100px;
-height:120px;
+height:130px;
 background:gold;
-border-radius:10px;
+border-radius:12px;
 display:flex;
 align-items:center;
 justify-content:center;
+font-size:30px;
+font-weight:bold;
+position:absolute;
 cursor:pointer;
-font-size:25px;
-color:black;
+transition:all .6s ease;
 }
+
+#cup1{ left:0px; }
+#cup2{ left:160px; }
+#cup3{ left:320px; }
+
+#result{
+margin-top:20px;
+font-size:24px;
+}
+
 </style>
+
 </head>
 
 <body>
 
 <h1>King Thimbles Game</h1>
-<p>Pick a cup</p>
 
-<div class="cups">
-<div class="cup" onclick="pick(1)">1</div>
-<div class="cup" onclick="pick(2)">2</div>
-<div class="cup" onclick="pick(3)">3</div>
+<button onclick="startShuffle()">Start Round</button>
+
+<div id="game">
+
+<div class="cup" id="cup1" onclick="pickCup(1)">1</div>
+<div class="cup" id="cup2" onclick="pickCup(2)">2</div>
+<div class="cup" id="cup3" onclick="pickCup(3)">3</div>
+
 </div>
 
-<p id="result"></p>
+<p id="result">Press Start Round</p>
 
 <script>
 
-let winning=Math.floor(Math.random()*3)+1;
+let positions = [0,160,320];
+let cups = [];
+let winningCup = 0;
+let shuffling = false;
 
-function pick(choice){
+function startShuffle(){
 
-if(choice===winning){
-document.getElementById("result").innerText="You Win!";
+document.getElementById("result").innerText="Shuffling...";
+shuffling = true;
+
+cups = [
+document.getElementById("cup1"),
+document.getElementById("cup2"),
+document.getElementById("cup3")
+];
+
+let shuffleCount = 10;
+
+let shuffleInterval = setInterval(()=>{
+
+let a = Math.floor(Math.random()*3);
+let b = Math.floor(Math.random()*3);
+
+while(a === b){
+b = Math.floor(Math.random()*3);
 }
-else{
-document.getElementById("result").innerText="You Lose! Correct cup was "+winning;
+
+let temp = positions[a];
+positions[a] = positions[b];
+positions[b] = temp;
+
+cups[a].style.left = positions[a] + "px";
+cups[b].style.left = positions[b] + "px";
+
+shuffleCount--;
+
+if(shuffleCount <= 0){
+
+clearInterval(shuffleInterval);
+
+winningCup = Math.floor(Math.random()*3)+1;
+
+document.getElementById("result").innerText="Pick a cup";
+
+shuffling = false;
+
 }
 
-winning=Math.floor(Math.random()*3)+1;
+},700);
+
+}
+
+function pickCup(choice){
+
+if(shuffling){
+alert("Wait for shuffle!");
+return;
+}
+
+if(choice === winningCup){
+
+document.getElementById("result").innerText="🎉 You Win!";
+
+}else{
+
+document.getElementById("result").innerText="❌ Try Again";
+
+}
 
 }
 
