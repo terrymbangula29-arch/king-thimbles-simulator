@@ -1,97 +1,164 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Aviator Simulator</title>
+
+<style>
+
+body{
+background:#0f0f0f;
+color:white;
+font-family:Arial;
+text-align:center;
+}
+
+button{
+padding:10px 20px;
+font-size:16px;
+margin:10px;
+background:red;
+color:white;
+border:none;
+cursor:pointer;
+}
+
+#multiplier{
+font-size:60px;
+color:#00ff9c;
+margin-top:30px;
+}
+
+.panel{
+margin-top:20px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Aviator Crash Simulator</h1>
+
+BET
+
+<br>
+
+<input id="bet" type="number" value="1">
+
+<br>
+
+AUTO CASHOUT
+
+<br>
+
+<input id="cashout" type="number" value="2">
+
+<br>
+
+<button onclick="start()">START ROUND</button>
+
+<div id="multiplier">1.00x</div>
+
+<h2 id="result"></h2>
+
+<div class="panel">
+
+Total Rounds:
+<span id="rounds">0</span>
+
+<br>
+
+Total Profit:
+<span id="profit">0</span>
+
+</div>
+
 <script>
 
-let cups
-let pos = [0,160,320]
-let shuffling=false
-let winningCup
+let multiplier=1
+let interval
+let crashPoint
 
-function startGame(){
+let rounds=0
+let profit=0
 
-cups=[
-document.getElementById("cup1"),
-document.getElementById("cup2"),
-document.getElementById("cup3")
-]
+function generateCrash(){
 
-winningCup=Math.floor(Math.random()*3)+1
+let r=Math.random()
 
-shuffleSequence(20)
+return Math.max(1,(1/(1-r))).toFixed(2)
 
 }
 
-function shuffleSequence(times){
+function start(){
 
-shuffling=true
+multiplier=1
 
-let shuffle=setInterval(()=>{
+crashPoint=parseFloat(generateCrash())
 
-let a=Math.floor(Math.random()*3)
-let b=Math.floor(Math.random()*3)
+document.getElementById("result").innerText=""
 
-while(a===b){
-b=Math.floor(Math.random()*3)
-}
+let bet=parseFloat(document.getElementById("bet").value)
 
-streetSwap(a,b)
+let cashout=parseFloat(document.getElementById("cashout").value)
 
-times--
+interval=setInterval(()=>{
 
-if(times<=0){
+multiplier+=0.02
 
-clearInterval(shuffle)
+document.getElementById("multiplier").innerText=
+multiplier.toFixed(2)+"x"
 
-document.getElementById("result").innerText="Pick a cup"
+if(multiplier>=crashPoint){
 
-shuffling=false
+clearInterval(interval)
 
-}
+document.getElementById("result").innerText=
+"CRASHED at "+crashPoint+"x"
 
-},220)
+rounds++
 
-}
+profit-=bet
 
-function streetSwap(a,b){
-
-let cupA=cups[a]
-let cupB=cups[b]
-
-let posA=pos[a]
-let posB=pos[b]
-
-cupA.style.transform="translate("+posB+"px,-40px)"
-cupB.style.transform="translate("+posA+"px,40px)"
-
-setTimeout(()=>{
-
-cupA.style.transform="translate("+posB+"px,0px)"
-cupB.style.transform="translate("+posA+"px,0px)"
-
-},200)
-
-let temp=pos[a]
-pos[a]=pos[b]
-pos[b]=temp
+updateStats()
 
 }
 
-function pickCup(choice){
+if(multiplier>=cashout){
 
-if(shuffling){
-alert("Wait for shuffle!")
-return
+clearInterval(interval)
+
+let win=bet*cashout
+
+profit+=win-bet
+
+document.getElementById("result").innerText=
+"Cashed Out at "+cashout+"x | Win "+win
+
+rounds++
+
+updateStats()
+
 }
 
-if(choice===winningCup){
-
-document.getElementById("result").innerText="🎉 You Win!"
-
-}else{
-
-document.getElementById("result").innerText="❌ Try Again"
+},50)
 
 }
+
+function updateStats(){
+
+document.getElementById("rounds").innerText=rounds
+
+document.getElementById("profit").innerText=profit.toFixed(2)
 
 }
 
 </script>
 
+</body>
+
+</html>
